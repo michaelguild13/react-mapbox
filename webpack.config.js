@@ -1,3 +1,4 @@
+// https://webpack.github.io/docs/webpack-dev-server.html
 var webpack = require('webpack'),
     path = require('path');
 
@@ -8,7 +9,6 @@ module.exports = {
   },
   module: {
     loaders: [
-      // Js files use babel loader
       {
         test: /\.js$/,
         loader: 'babel'
