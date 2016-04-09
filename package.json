@@ -1,0 +1,30 @@
+{
+  "name": "react-component-library-tutorial",
+  "version": "1.0.0",
+  "description": "react component library tutorial",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/michaelguild13/react-component-library-tutorial.git"
+  },
+  "keywords": [
+    "React",
+    "Webpack",
+    "Babel",
+    "Es6",
+    "es2015",
+    "Material",
+    "Design",
+    "Lite",
+    "MDL"
+  ],
+  "author": "Michael Guild",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/michaelguild13/react-component-library-tutorial/issues"
+  },
+  "homepage": "https://github.com/michaelguild13/react-component-library-tutorial#readme"
+}
