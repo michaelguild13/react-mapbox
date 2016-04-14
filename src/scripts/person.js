@@ -5,37 +5,31 @@ import _ from 'underscore'
 export class Person extends Component {
 
   _onClick(){
+    this._createPolyLines( this.props.color, this.props.data, this.props.map)
+  }
+
+  /**
+   * Creates Polylines
+   * @param  {String} color of line
+   * @param  {Array} Lat & Long Data
+   * @param  {object} MapBox Map
+   */
+  _createPolyLines( color, data , map){
     // Set Polyline Options
     let polyline_options = {
-          color: this.props.color
+          color: color
         }
 
     // Create Polyline for each Day
-    _.each(this.props.data, (i) => {
+    _.each(data, (i) => {
       // sort data by time
       let sort = _.sortBy(i.data, function(i) { return i.time })
       // set data to array
       let line_points = _.map(sort, (i) => {
         return [ i.lat, i.long ]
       })
-      L.polyline( line_points, polyline_options ).addTo(this.props.map);
+      L.polyline( line_points, polyline_options ).addTo(map);
     })
-  }
-
-  _getLinePoints(){
-    return [
-      [38.893596444352134, -77.0381498336792],
-      [38.89337933372204, -77.03792452812195],
-      [38.89316222242831, -77.03761339187622],
-      [38.893028615148424, -77.03731298446655],
-      [38.892920059048464, -77.03691601753235],
-      [38.892903358095296, -77.03637957572937],
-      [38.89301191422077, -77.03592896461487],
-      [38.89316222242831, -77.03549981117249],
-      [38.89340438498248, -77.03514575958252],
-      [38.893596444352134, -77.0349633693695]
-    ]
-
   }
 
   render() {
