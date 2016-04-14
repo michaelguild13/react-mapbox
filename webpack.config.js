@@ -1,32 +1,26 @@
-// https://webpack.github.io/docs/webpack-dev-server.html
-var webpack = require('webpack'),
-    path = require('path'),
-    fs = require('fs');
-
-// Don't include nodeModules
-// We need this so that webpack-dev-server doesn't complain when compiling
-var nodeModules = {};
-fs.readdirSync('node_modules')
-  .filter(function(x) {
-      return ['.bin'].indexOf(x) === -1;
-  })
-  .forEach(function(mod) {
-      nodeModules[mod] = 'commonjs ' + mod;
-  });
-//console.log('Node Modules: '+ JSON.stringify(nodeModules));
+var path = require('path');
+var webpack = require('webpack');
 
 module.exports = {
-  externals: nodeModules,
-  module: {
-    loaders: [
-      {
-        test: /\.js$/,
-        loader: 'babel'
-      }
+    entry: [
+        'webpack-dev-server/client?http://localhost:1337',
+        'webpack/hot/dev-server',
+        './src/scripts/index'
+    ],
+    output: {
+        path: __dirname,
+        filename: 'bundle.js',
+        publicPath: '/static/'
+    },
+    module: {
+        loaders: [
+            { test: /\.js$/, loaders: ['babel'], include: path.join(__dirname, 'src') },
+            { test: /\.scss$/, loader: 'style-loader!css-loader!sass-loader?sourceMap', include: path.join(__dirname, 'src/scss')},
+            { test: /\.css$/, loader: 'style-loader!css-loader?sourceMap', include: path.join(__dirname, 'src/scss')},
+        ]
+    },
+    plugins: [
+            new webpack.HotModuleReplacementPlugin(),
+            new webpack.NoErrorsPlugin()
     ]
-  },
-  plugins: [
-    new webpack.HotModuleReplacementPlugin(),
-    new webpack.NoErrorsPlugin()
-  ]
-}
+};
