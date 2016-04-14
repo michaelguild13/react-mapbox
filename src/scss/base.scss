@@ -1,11 +1,17 @@
 @import 'variables.scss';
 
 html {
-	background: $defaultColor;
-	color: $textColor;
+  background: $defaultColor;
+  color: $textColor;
 }
 
 #map{
-	width: 100%;
-	height: 500px;
+  width: 100%;
+  height: 580px;
+}
+.mdl-layout__drawer-button {
+	left: inherit;
+	right: 0;
+  background: #fff;
+  border: 1px solid;
 }
