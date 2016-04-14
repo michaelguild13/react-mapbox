@@ -5,6 +5,7 @@ export class MapBox extends Component {
 
   componentDidMount() {
     let node = findDOMNode(this)
+    map = L.mapbox.map('map', 'mapbox.streets')
   }
 
   componentDidUpdate(prevProps) {
@@ -17,9 +18,7 @@ export class MapBox extends Component {
 
   render() {
     return (
-      <div className={className}>
-        bla
-      </div>
+      <div id="map"></div>
     )
   }
 }
