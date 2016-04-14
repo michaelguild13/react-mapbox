@@ -1,15 +1,25 @@
 import React, { Component } from 'react'
 import { findDOMNode } from 'react-dom'
+import _ from 'underscore'
 
 export class Person extends Component {
 
   _onClick(){
+    // Set Polyline Options
     let polyline_options = {
           color: this.props.color
-        },
-        line_points = this._getLinePoints()
+        }
 
-    L.polyline( line_points, polyline_options ).addTo(this.props.map);
+    // Create Polyline for each Day
+    _.each(this.props.data, (i) => {
+      // sort data by time
+      let sort = _.sortBy(i.data, function(i) { return i.time })
+      // set data to array
+      let line_points = _.map(sort, (i) => {
+        return [ i.lat, i.long ]
+      })
+      L.polyline( line_points, polyline_options ).addTo(this.props.map);
+    })
   }
 
   _getLinePoints(){
@@ -25,6 +35,7 @@ export class Person extends Component {
       [38.89340438498248, -77.03514575958252],
       [38.893596444352134, -77.0349633693695]
     ]
+
   }
 
   render() {
