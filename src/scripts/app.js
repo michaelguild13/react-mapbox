@@ -20,7 +20,7 @@ export class App extends Component {
 
   componentDidMount() {
     // Track Map State
-    this.state.map = MAP = L.mapbox.map('map', 'mapbox.streets').setView([38.9071923, -77.03687070000001], 16)
+    this.state.map = L.mapbox.map('map', 'mapbox.streets').setView([38.89370499941828,  -77.0364761352539], 16)
     // Force a ReRender once
     this.forceUpdate()
   }
