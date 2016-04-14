@@ -15,6 +15,7 @@ module.exports = {
     module: {
         loaders: [
             { test: /\.js$/, loaders: ['babel'], include: path.join(__dirname, 'src') },
+            { test: /\.json$/, loader: 'json' },
             { test: /\.scss$/, loader: 'style-loader!css-loader!sass-loader?sourceMap', include: path.join(__dirname, 'src/scss')},
             { test: /\.css$/, loader: 'style-loader!css-loader?sourceMap', include: path.join(__dirname, 'src/scss')},
         ]
