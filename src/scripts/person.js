@@ -5,7 +5,14 @@ import _ from 'underscore'
 export class Person extends Component {
 
   _onClick(){
-    this._createPolyLines( this.props.color, this.props.data, this.props.map)
+    let map = this.props.map,
+        layer = this.state
+    // if this person is already added
+    if ( this.state ) {
+      this._removePolyLines( this.state, this.props.map)
+    } else {
+      this._createPolyLines( this.props.color, this.props.data, this.props.map)
+    }
   }
 
   /**
@@ -19,7 +26,6 @@ export class Person extends Component {
     let polyline_options = {
           color: color
         }
-
     // Create Polyline for each Day
     _.each(data, (i) => {
       // sort data by time
@@ -28,8 +34,21 @@ export class Person extends Component {
       let line_points = _.map(sort, (i) => {
         return [ i.lat, i.long ]
       })
-      L.polyline( line_points, polyline_options ).addTo(map);
+      // Set polylines as state
+      this.setState({
+        [i.event] : L.polyline( line_points, polyline_options ).addTo(map)
+      })
     })
+  }
+
+  _removePolyLines( data, map){
+    _.each(data, (i, k) => {
+      if ( map.hasLayer( i ) ) {
+        map.removeLayer( i )
+        delete this.state[k]
+      }
+    })
+
   }
 
   render() {
