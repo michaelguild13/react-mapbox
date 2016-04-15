@@ -37,22 +37,25 @@ export class Person extends Component {
    */
   _createPolyLines( color, data , map){
     // TODO: Filter Data
+    data = this._filterData(data)
 
-    // Create Polyline for each Day
-    _.each(data, (i, k) => {
-      // Set Polyline Options
-      let polyline_options = { color: color }
-      // sort data by time
-      let sort = _.sortBy(i.data, function(i) { return i.time })
-      // set data to array
-      let line_points = _.map(sort, (i) => {
-        return [ i.lat, i.long ]
-      })
-      // Set polylines as state
-      this.setState({
-        [i.event] : L.polyline( line_points, polyline_options ).addTo(map)
-      })
-    }.bind(this))
+    if (data) {
+      // Create Polyline for each Day
+      _.each(data, (i, k) => {
+        // Set Polyline Options
+        let polyline_options = { color: color }
+        // sort data by time
+        let sort = _.sortBy(i.data, function(i) { return i.time })
+        // set data to array
+        let line_points = _.map(sort, (i) => {
+          return [ i.lat, i.long ]
+        })
+        // Set polylines as state
+        this.setState({
+          [i.event] : L.polyline( line_points, polyline_options ).addTo(map)
+        })
+      }.bind(this))
+    }
   }
 
   /**
@@ -61,9 +64,6 @@ export class Person extends Component {
    * @param  {Object} MapBox
    */
   _removePolyLines( data, map, filters){
-
-    this._filterData(data, filters)
-
     _.each(data, (i, k) => {
       if ( map.hasLayer( i ) ) {
         map.removeLayer( i )
@@ -73,14 +73,14 @@ export class Person extends Component {
 
   }
 
-  _filterData(data, filters){
+  _filterData(data){
+    let filteredData = []
+    
     // Filter Data with Filters
-    return _.map(data, (i) => {
-
+    _.map(data, (i) => {
       let date = i.event.replace(/-/g,''),
           startDate = this.state.filters.startDate ? this.state.filters.startDate.replace(/-/g,'') : '',
           endDate = this.state.filters.endDate ? this.state.filters.endDate.replace(/-/g,'') : ''
-      debugger
       // filter dates
       if ( startDate ) {
         if ( date < startDate ) { return }
@@ -89,13 +89,13 @@ export class Person extends Component {
         if ( date > endDate ) { return }
       }
       // return data if it passes all filters
-      return i
+      filteredData.push(i)
     }.bind(this))
+
+    return filteredData
   }
 
   render() {
-
-    this._filterData(this.state.data, this.state.filters)
 
     let active = this.state.active ? this.props.color : '',
         style = { 'backgroundColor': active }
