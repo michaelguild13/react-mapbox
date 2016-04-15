@@ -4,13 +4,25 @@ import _ from 'underscore'
 
 export class Person extends Component {
 
+  constructor(props) {
+    super(props)
+    this.state = {
+      data: this.props.data,
+      map: this.props.map,
+      color: this.props.color,
+      active: false
+    }
+  }
+
   _onClick(){
     let map = this.props.map,
         layer = this.state
     // if this person is already added
-    if ( this.state ) {
+    if ( this.state.active ) {
+      this.setState({ active: false })
       this._removePolyLines( this.state, this.props.map)
     } else {
+      this.setState({ active: true })
       this._createPolyLines( this.props.color, this.props.data, this.props.map)
     }
   }
@@ -41,6 +53,11 @@ export class Person extends Component {
     })
   }
 
+  /**
+   * Removes Polylines
+   * @param  {Array}  Layers
+   * @param  {Object} MapBox
+   */
   _removePolyLines( data, map){
     _.each(data, (i, k) => {
       if ( map.hasLayer( i ) ) {
@@ -52,8 +69,10 @@ export class Person extends Component {
   }
 
   render() {
+    let active = this.state.active ? this.props.color : '',
+        style = { 'backgroundColor': active }
     return (
-      <a className="mdl-navigation__link" onClick={this._onClick.bind(this)}>
+      <a className="mdl-navigation__link" onClick={this._onClick.bind(this)} style={style}>
         <i className="material-icons" style={{'color': this.props.color }}>
           account_box
         </i>
