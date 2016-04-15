@@ -2,7 +2,7 @@
 This is a react & mapbox example for filtering people on their daily location path. This demo is meant to show how to filter data based on date, time, and location. To filter on date or time, use the respective inputs. Filter based on circle marker is a feature in progress.
 
 ### Tech Stack
-node.js + webpack + babel + react + mapbox
+node.js + webpack + babel + react + mapbox + Material Design Lite
 
 ###Installation
 `npm install`
