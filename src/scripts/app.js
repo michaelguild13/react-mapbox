@@ -82,6 +82,24 @@ export class App extends Component {
               error="Enter a Valid Date"
               onChange={this._onChange.bind(this)}
               />
+            <Filter
+              label="Start Time"
+              type="range"
+              name="startTime"
+              min="0"
+              max="2400"
+              value="0"
+              onChange={this._onChange.bind(this)}
+              />
+            <Filter
+              label="End Time"
+              type="range"
+              name="endtTime"
+              min="0"
+              max="2400"
+              value="2400"
+              onChange={this._onChange.bind(this)}
+              />
           </nav>
           <span className="mdl-layout-title">People</span>
           <nav className="mdl-navigation">
