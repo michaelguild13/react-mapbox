@@ -17,7 +17,8 @@ export class Person extends Component {
   }
 
   componentDidUpdate() {
-    this._filterLayers(this.state.data)
+    // Only filter when state is active
+    this.state.active ? this._filterLayers(this._filterData()) : ''
   }
 
   _onClick(){
@@ -91,14 +92,16 @@ export class Person extends Component {
    * @param  {Object} State Data
    * @return {Object} All valid Data
    */
-  _filterData(data){
+  _filterData(){
     let filteredData = []
 
     // Filter Data with Filters
-    _.map(data, (i) => {
-      let date = i.event.replace(/-/g,''),
+    _.map( this.props.data, (i) => {
+      let newData = [],
+          date = i.event.replace(/-/g,''),
           startDate = this.state.filters.startDate ? this.state.filters.startDate.replace(/-/g,'') : '',
           endDate = this.state.filters.endDate ? this.state.filters.endDate.replace(/-/g,'') : ''
+
       // filter dates
       if ( startDate ) {
         if ( date < startDate ) { return }
@@ -106,9 +109,27 @@ export class Person extends Component {
       if ( endDate ) {
         if ( date > endDate ) { return }
       }
-      // return data if it passes all filters
+
+      _.map(i.data, (i) => {
+        let time = i.time ? i.time : '',
+            startTime = this.state.filters.startTime ? this.state.filters.startTime.replace(/:/g,'') : '',
+            endTime = this.state.filters.endTime ? this.state.filters.endTime.replace(/:/g,'') : ''
+
+        // filter time
+        if ( startTime ) {
+          if ( time <= startTime ) { return }
+        }
+        if ( endTime ) {
+          if ( time >= endTime ) { return }
+        }
+        newData.push(i)
+      }.bind(this))
+
+      i.data = newData
       filteredData.push(i)
+
     }.bind(this))
+
     return filteredData
   }
 
@@ -117,13 +138,13 @@ export class Person extends Component {
    * @param  {Object} data
    */
   _filterLayers(data) {
-    var filteredDefinition = {},
-        filteredData = this._filterData(data)
+    let filteredDefinition = {}
 
     // Check if Map has been created yet
     if ( this.props.map.hasLayer ) {
+
       // Create Definition
-      _.each( filteredData , (i, k) => {
+      _.each( data , (i, k) => {
         filteredDefinition[i.event] = i
       })
 
@@ -135,8 +156,23 @@ export class Person extends Component {
         }
       }.bind(this))
 
+      // Rerender layers that are in state but  updated
+      _.each( this.state , (i, k) => {
+        if ( filteredDefinition[k] && this.props.map.hasLayer( i )) {
+          // check length is the same
+          if ( filteredDefinition[k].data.length !== this.state[k]._latlngs.length ) {
+            // remove
+            this.props.map.removeLayer( i )
+            delete this.state[k]
+            // rerender
+            this._createPolyLine(this.props.color, filteredDefinition[k].data, filteredDefinition[k].event, this.props.map)
+          }
+        }
+      }.bind(this))
+
       // Add layers that aren't in state
       _.each( filteredDefinition , (i, k) => {
+        // if not in state create
         if ( !this.state[k] && this.state.active) {
           this._createPolyLine(this.props.color, i.data, i.event, this.props.map)
         }
@@ -145,6 +181,7 @@ export class Person extends Component {
   }
 
   render() {
+
     let active = this.state.active ? this.props.color : '',
         style = { 'backgroundColor': active }
 

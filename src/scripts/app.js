@@ -84,20 +84,14 @@ export class App extends Component {
               />
             <Filter
               label="Start Time"
-              type="range"
+              type="time"
               name="startTime"
-              min="0"
-              max="2400"
-              value="0"
               onChange={this._onChange.bind(this)}
               />
             <Filter
               label="End Time"
-              type="range"
+              type="time"
               name="endtTime"
-              min="0"
-              max="2400"
-              value="2400"
               onChange={this._onChange.bind(this)}
               />
           </nav>
