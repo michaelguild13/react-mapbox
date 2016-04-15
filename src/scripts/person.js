@@ -34,22 +34,24 @@ export class Person extends Component {
    * @param  {object} MapBox Map
    */
   _createPolyLines( color, data , map){
-    // Set Polyline Options
-    let polyline_options = {
-          color: color
-        }
     // Create Polyline for each Day
-    _.each(data, (i) => {
-      // sort data by time
-      let sort = _.sortBy(i.data, function(i) { return i.time })
-      // set data to array
-      let line_points = _.map(sort, (i) => {
-        return [ i.lat, i.long ]
-      })
-      // Set polylines as state
-      this.setState({
-        [i.event] : L.polyline( line_points, polyline_options ).addTo(map)
-      })
+    _.each(data, (i, k) => {
+      if ( map.hasLayer( i ) ) {
+
+      } else {
+        // Set Polyline Options
+        let polyline_options = { color: color }
+        // sort data by time
+        let sort = _.sortBy(i.data, function(i) { return i.time })
+        // set data to array
+        let line_points = _.map(sort, (i) => {
+          return [ i.lat, i.long ]
+        })
+        // Set polylines as state
+        this.setState({
+          [i.event] : L.polyline( line_points, polyline_options ).addTo(map)
+        })
+      }
     })
   }
 
