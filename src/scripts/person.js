@@ -42,8 +42,6 @@ export class Person extends Component {
    */
   _createPolyLines( color, data , map){
     // Filter Data
-    data = this._filterData(data)
-
     if (data) {
       // Create Polyline for each Day
       _.each(data, (i, k) => {
@@ -64,7 +62,9 @@ export class Person extends Component {
     // Set Polyline Options
     let polyline_options = { color: color }
     // sort data by time
-    let sort = _.sortBy(data, function(i) { return i.time })
+    let sort = _.sortBy(data, function(i) {
+      return i.time
+    })
     // set data to array
     let line_points = _.map(sort, (i) => { return [ i.lat, i.long ] })
     // Set polylines as state
@@ -97,10 +97,11 @@ export class Person extends Component {
 
     // Filter Data with Filters
     _.map( this.props.data, (i) => {
-      let newData = [],
-          date = i.event.replace(/-/g,''),
+      let date = i.event.replace(/-/g,''),
           startDate = this.state.filters.startDate ? this.state.filters.startDate.replace(/-/g,'') : '',
-          endDate = this.state.filters.endDate ? this.state.filters.endDate.replace(/-/g,'') : ''
+          endDate = this.state.filters.endDate ? this.state.filters.endDate.replace(/-/g,'') : '',
+          startTime = this.state.filters.startTime ? this.state.filters.startTime.replace(/:/g,'') : '',
+          endTime = this.state.filters.endTime ? this.state.filters.endTime.replace(/:/g,'') : ''
 
       // filter dates
       if ( startDate ) {
@@ -110,24 +111,22 @@ export class Person extends Component {
         if ( date > endDate ) { return }
       }
 
-      _.map(i.data, (i) => {
-        let time = i.time ? i.time : '',
-            startTime = this.state.filters.startTime ? this.state.filters.startTime.replace(/:/g,'') : '',
-            endTime = this.state.filters.endTime ? this.state.filters.endTime.replace(/:/g,'') : ''
+      let filteredTime = { event: i.event, data: []}
 
+      _.map(i.data, (i) => {
         // filter time
-        if ( startTime ) {
-          if ( time <= startTime ) { return }
+        if (startTime) {
+          if ( i.time <= startTime ) { return }
         }
-        if ( endTime ) {
-          if ( time >= endTime ) { return }
+
+        if (endTime) {
+          if ( i.time >= endTime ) { return }
         }
-        newData.push(i)
+
+        filteredTime.data.push(i)
       }.bind(this))
 
-      i.data = newData
-      filteredData.push(i)
-
+      filteredData.push(filteredTime)
     }.bind(this))
 
     return filteredData
