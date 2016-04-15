@@ -46,20 +46,30 @@ export class Person extends Component {
     if (data) {
       // Create Polyline for each Day
       _.each(data, (i, k) => {
-        // Set Polyline Options
-        let polyline_options = { color: color }
-        // sort data by time
-        let sort = _.sortBy(i.data, function(i) { return i.time })
-        // set data to array
-        let line_points = _.map(sort, (i) => {
-          return [ i.lat, i.long ]
-        })
-        // Set polylines as state
-        this.setState({
-          [i.event] : L.polyline( line_points, polyline_options ).addTo(map)
-        })
+        this._createPolyLine(color, i.data, i.event, map)
       }.bind(this))
     }
+  }
+
+  /**
+   * Creates a single polyline
+   * @param  {[type]} color [description]
+   * @param  {[type]} data  [description]
+   * @param  {[type]} event [description]
+   * @param  {[type]} map   [description]
+   * @return {[type]}       [description]
+   */
+  _createPolyLine(color, data, event, map) {
+    // Set Polyline Options
+    let polyline_options = { color: color }
+    // sort data by time
+    let sort = _.sortBy(data, function(i) { return i.time })
+    // set data to array
+    let line_points = _.map(sort, (i) => { return [ i.lat, i.long ] })
+    // Set polylines as state
+    this.setState({
+      [event] : L.polyline( line_points, polyline_options ).addTo(map)
+    })
   }
 
   /**
@@ -76,6 +86,11 @@ export class Person extends Component {
     })
   }
 
+  /**
+   * Filters the data based on state filters
+   * @param  {Object} State Data
+   * @return {Object} All valid Data
+   */
   _filterData(data){
     let filteredData = []
 
@@ -97,27 +112,39 @@ export class Person extends Component {
     return filteredData
   }
 
+  /**
+   * filters layers ON componentDidUpdate
+   * @param  {Object} data
+   */
   _filterLayers(data) {
-    let filteredDefinition = {}
+    var filteredDefinition = {},
+        filteredData = this._filterData(data)
 
     // Check if Map has been created yet
     if ( this.props.map.hasLayer ) {
-      _.each( this._filterData(data) , (i, k) => {
-        filteredDefinition[i.event] = 'true'
+      // Create Definition
+      _.each( filteredData , (i, k) => {
+        filteredDefinition[i.event] = i
       })
 
+      // Remove layers that aren't in the definition
       _.each( this.state , (i, k) => {
-
         if ( !filteredDefinition[k] && this.props.map.hasLayer( i )) {
           this.props.map.removeLayer( i )
           delete this.state[k]
+        }
+      }.bind(this))
+
+      // Add layers that aren't in state
+      _.each( filteredDefinition , (i, k) => {
+        if ( !this.state[k] && this.state.active) {
+          this._createPolyLine(this.props.color, i.data, i.event, this.props.map)
         }
       }.bind(this))
     }
   }
 
   render() {
-
     let active = this.state.active ? this.props.color : '',
         style = { 'backgroundColor': active }
 
