@@ -13,8 +13,8 @@ export class App extends Component {
     super(props)
     this.state = {
       data: this._addHexColor(),
-      map: null,
-      filters: null
+      map: {},
+      filters: {}
     }
   }
 
@@ -46,22 +46,23 @@ export class App extends Component {
           name={i.name}
           color={i.color}
           data={i.events}
-          filters={this.state.filters}
           map={this.state.map}
+          filters={this.state.filters}
         />)
-    })
+    }.bind(this))
   }
 
+  /**
+   * Set Filters
+   * @param  {String} value
+   * @param  {String} Filter Name
+   */
   _onChange (v, name) {
-    this.setState({
-      filter: {
-        name: v
-      }
-    })
+    this.state.filters[name] = v
+    this.setState({filters: this.state.filters })
   }
 
   render() {
-
     return (
       <div className="mdl-layout mdl-js-layout mdl-layout--fixed-drawer">
         <div className="mdl-layout__drawer">
