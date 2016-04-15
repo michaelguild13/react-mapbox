@@ -16,6 +16,10 @@ export class Person extends Component {
     }
   }
 
+  componentDidUpdate() {
+    this._filterLayers(this.state.data)
+  }
+
   _onClick(){
     let map = this.props.map,
         layer = this.state
@@ -36,7 +40,7 @@ export class Person extends Component {
    * @param  {object} MapBox Map
    */
   _createPolyLines( color, data , map){
-    // TODO: Filter Data
+    // Filter Data
     data = this._filterData(data)
 
     if (data) {
@@ -70,12 +74,11 @@ export class Person extends Component {
         delete this.state[k]
       }
     })
-
   }
 
   _filterData(data){
     let filteredData = []
-    
+
     // Filter Data with Filters
     _.map(data, (i) => {
       let date = i.event.replace(/-/g,''),
@@ -91,8 +94,26 @@ export class Person extends Component {
       // return data if it passes all filters
       filteredData.push(i)
     }.bind(this))
-
     return filteredData
+  }
+
+  _filterLayers(data) {
+    let filteredDefinition = {}
+
+    // Check if Map has been created yet
+    if ( this.props.map.hasLayer ) {
+      _.each( this._filterData(data) , (i, k) => {
+        filteredDefinition[i.event] = 'true'
+      })
+
+      _.each( this.state , (i, k) => {
+
+        if ( !filteredDefinition[k] && this.props.map.hasLayer( i )) {
+          this.props.map.removeLayer( i )
+          delete this.state[k]
+        }
+      }.bind(this))
+    }
   }
 
   render() {
